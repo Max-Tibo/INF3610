@@ -195,7 +195,11 @@ void TaskGeneratePacket(void *data) {
 	int packGenQty = (rand() % 250);
 	while (true) {
 		if (isGenPhase) {
+			OSMutexPend(mutexMemory, 0, &err);
+			err_msg("Error accepting mutex", err);
 			Packet *packet = malloc(sizeof(Packet));
+			err = OSMutexPost(mutexMemory);
+			err_msg("Error posting mutex", err);
 
 			packet->src = rand() * (UINT32_MAX / RAND_MAX);
 			packet->dst = rand() * (UINT32_MAX / RAND_MAX);
