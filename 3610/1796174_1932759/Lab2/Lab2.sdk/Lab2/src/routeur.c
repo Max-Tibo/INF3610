@@ -131,8 +131,8 @@ int create_tasks() {
 	static OS_STK TaskPrint3Stk[TASK_STK_SIZE];
 
 	OSTaskCreate(TaskGeneratePacket, NULL, &TaskReceiveStk[TASK_STK_SIZE-1], TASK_GENERATE_PRIO);
-	OSTaskCreate(TaskVerifySource, NULL, &TaskStopStk[TASK_STK_SIZE-1], TASK_STOP_PRIO);
-	OSTaskCreate(TaskVerifyCRC, NULL, &TaskResetStk[TASK_STK_SIZE-1], TASK_RESET_PRIO);
+	OSTaskCreate(TaskVerifySource, NULL, &TaskVerifySourceStk[TASK_STK_SIZE-1], TASK_STOP_PRIO);
+	OSTaskCreate(TaskVerifyCRC, NULL, &TaskVerifyCRCStk[TASK_STK_SIZE-1], TASK_RESET_PRIO);
 	OSTaskCreate(TaskStats, NULL, &TaskStatsStk[TASK_STK_SIZE-1], TASK_STATS_PRIO);
 	OSTaskCreate(TaskComputing, NULL, &TaskComputeStk[TASK_STK_SIZE-1], TASK_COMPUTING_PRIO);
 	OSTaskCreate(TaskForwarding, NULL, &TaskForwardingStk[TASK_STK_SIZE-1], TASK_FORWARDING_PRIO);
