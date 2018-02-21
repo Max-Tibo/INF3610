@@ -191,7 +191,7 @@ void TaskGeneratePacket(void *data) {
 	srand(42);
 	uint8_t err;
 	bool isGenPhase = true; 					// Indique si on est dans la phase de generation ou non
-	const bool shouldSlowThingsDown = true;		// Variable à modifier
+	const bool shouldSlowThingsDown = true;		// Variable � modifier
 	int packGenQty = (rand() % 250);
 	while (true) {
 		if (isGenPhase) {
@@ -205,21 +205,21 @@ void TaskGeneratePacket(void *data) {
 			packet->dst = rand() * (UINT32_MAX / RAND_MAX);
 			packet->type = rand() % NB_PACKET_TYPE;
 
+			for (int i = 0; i < ARRAY_SIZE(packet->data); ++i)
+				packet->data[i] = (unsigned int) rand();
+			packet->data[0] = nbPacketCrees;
+
 			//Compute CRC
 			packet->crc = 0;
 			if (rand() % 10 == 9) // 10% of Packets with bad CRC
 				packet->crc = 1234;
 			else
-				packet->crc = computeCRC((unsigned short*) (&packet), 64);
-
-			for (int i = 0; i < ARRAY_SIZE(packet->data); ++i)
-				packet->data[i] = (unsigned int) rand();
-			packet->data[0] = nbPacketCrees;
+				packet->crc = computePacketCRC(packet);
 
 			nbPacketCrees++;
 
 			if (shouldSlowThingsDown) {
-				xil_printf("GENERATE : ********GÃ©nÃ©ration du Paquet # %d ******** \n", nbPacketCrees);
+				xil_printf("GENERATE : ********Génération du Paquet # %d ******** \n", nbPacketCrees);
 				xil_printf("ADD %x \n", packet);
 				xil_printf("	** src : %x \n", packet->src);
 				xil_printf("	** dst : %x \n", packet->dst);
@@ -231,7 +231,7 @@ void TaskGeneratePacket(void *data) {
 
 			if (err == OS_ERR_Q_FULL) {
 				xil_printf(
-						"GENERATE: Paquet rejeté a l'entrée car la FIFO est pleine !\n");
+						"GENERATE: Paquet rejet� a l'entr�e car la FIFO est pleine !\n");
 				free(packet);
 			}
 
@@ -240,7 +240,7 @@ void TaskGeneratePacket(void *data) {
 			} else {
 				OSTimeDlyHMSM(0, 0, 0, 2);
 
-				if ((nbPacketCrees % packGenQty) == 0) //On génère jusqu'à 250 paquets par phase de génération
+				if ((nbPacketCrees % packGenQty) == 0) //On g�n�re jusqu'� 250 paquets par phase de g�n�ration
 						{
 					isGenPhase = false;
 				}
@@ -250,7 +250,7 @@ void TaskGeneratePacket(void *data) {
 			isGenPhase = true;
 			packGenQty = (rand() % 250);
 			xil_printf(
-					"GENERATE: Génération de %d paquets durant les %d prochaines millisecondes\n",
+					"GENERATE: G�n�ration de %d paquets durant les %d prochaines millisecondes\n",
 					packGenQty, packGenQty * 2);
 		}
 	}
